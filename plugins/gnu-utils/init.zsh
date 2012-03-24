@@ -6,7 +6,7 @@
 #
 
 if (( $+commands[gdircolors] )); then
-  function __gnu_utils() {
+  function __gnu_utils {
     emulate -L zsh
     local gcmds
     local gcmd
@@ -46,7 +46,7 @@ if (( $+commands[gdircolors] )); then
   }
   __gnu_utils;
 
-  function hash() {
+  function hash {
     if (( $+argv[(er)-r] )) || (( $+argv[(er)-f] )); then
       builtin hash "$@"
       __gnu_utils
@@ -55,16 +55,20 @@ if (( $+commands[gdircolors] )); then
     fi
   }
 
-  function rehash() {
+  function rehash {
     hash -r "$@"
   }
 
   # A sensible default for ls.
-  if zstyle -t ':omz:alias:ls' color && [[ -f "$HOME/.dir_colors" ]]; then
-    eval $(gdircolors "$HOME/.dir_colors")
-    alias ls='ls -hF --group-directories-first --color=auto'
+  alias ls='ls --group-directories-first'
+
+  if zstyle -t ':omz:alias:ls' color; then
+    if [[ -f "$HOME/.dir_colors" ]]; then
+      eval $(gdircolors "$HOME/.dir_colors")
+    fi
+    alias ls="$aliases[ls] --color=auto"
   else
-    alias ls='ls -hF --group-directories-first'
+    alias ls="$aliases[ls] -F"
   fi
 fi
 

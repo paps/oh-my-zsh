@@ -5,31 +5,42 @@
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
-setopt CORRECT               # Correct commands.
+setopt CORRECT # Correct commands.
 
 # The 'ls' Family
-if zstyle -t ':omz:alias:ls' color; then
-  if [[ -f "$HOME/.dir_colors" ]] && (( $+commands[dircolors] )); then
-    eval $(dircolors "$HOME/.dir_colors")
-    alias ls='ls -hF --group-directories-first --color=auto'
+if (( $+commands[dircolors] )); then
+  # GNU core utilities.
+  alias ls='ls --group-directories-first'
+
+  if zstyle -t ':omz:alias:ls' color; then
+    if [[ -f "$HOME/.dir_colors" ]]; then
+      eval $(dircolors "$HOME/.dir_colors")
+    fi
+    alias ls="$aliases[ls] --color=auto"
   else
-    export CLICOLOR=1
+    alias ls="$aliases[ls] -F"
+  fi
+else
+  # BSD core utilities.
+  if zstyle -t ':omz:alias:ls' color; then
     export LSCOLORS="exfxcxdxbxegedabagacad"
-    alias ls='ls -G -F'
+    alias ls="ls -G"
+  else
+    alias ls='ls -F'
   fi
 fi
 
-alias l='ls -1A'             # Show files in one column.
-alias ll='ls -lh'            # Show human readable.
-alias la='ls -lhA'           # Show hidden files.
-alias lx='ls -lhXB'          # Sort by extension.
-alias lk='ls -lhSr'          # Sort by size, biggest last.
-alias lc='ls -lhtcr'         # Sort by and show change time, most recent last.
-alias lu='ls -lhtur'         # Sort by and show access time, most recent last.
-alias lt='ls -lhtr'          # Sort by date, most recent last.
-alias lm='ls -lha | more'    # Pipe through 'more'.
-alias lr='ls -lhR'           # Recursive ls.
-alias sl='ls'                # I often screw this up.
+alias l='ls -1A'         # List in one column.
+alias ll='ls -lh'        # List human readable sizes.
+alias lr='ll -R'         # List recursively.
+alias la='ll -A'         # List hidden files.
+alias lp='la | "$PAGER"' # List through pager.
+alias lx='ll -XB'        # List sorted by extension.
+alias lk='ll -Sr'        # List sorted by size, largest last.
+alias lt='ll -tr'        # List sorted by date, most recent last.
+alias lc='lt -c'         # List sorted by date, most recent last, show change time.
+alias lu='lt -u'         # List sorted by date, most recent last, show access time.
+alias sl='ls'            # I often screw this up.
 
 # General
 alias _='sudo'
@@ -57,8 +68,11 @@ alias scp='nocorrect scp'
 alias type='type -a'
 
 # Mac OS X
-if [[ "$OSTYPE" != darwin* ]]; then
-  alias open='xdg-open'
+if [[ "$OSTYPE" == darwin* ]]; then
+  alias o='open'
+  alias get='curl --continue-at - --location --progress-bar --remote-name'
+else
+  alias o='xdg-open'
   alias get='wget --continue --progress=bar'
 
   if (( $+commands[xclip] )); then
@@ -70,11 +84,8 @@ if [[ "$OSTYPE" != darwin* ]]; then
     alias pbcopy='xsel --clipboard --input'
     alias pbpaste='xsel --clipboard --output'
   fi
-else
-  alias get='curl --continue-at - --location --progress-bar --remote-name'
 fi
 
-alias o='open'
 alias pbc='pbcopy'
 alias pbp='pbpaste'
 
@@ -88,7 +99,7 @@ fi
 
 # Diff/Make
 if zstyle -t ':omz:alias:diff' color; then
-  function diff() {
+  function diff {
     if (( $+commands[colordiff] )); then
       "$commands[diff]" --unified "$@" | colordiff --difftype diffu
     elif (( $+commands[git] )); then
@@ -98,7 +109,7 @@ if zstyle -t ':omz:alias:diff' color; then
     fi
   }
 
-  function wdiff() {
+  function wdiff {
     if (( $+commands[wdiff] )); then
       "$commands[wdiff]" \
         --avoid-wraps \
