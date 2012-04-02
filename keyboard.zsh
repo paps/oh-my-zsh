@@ -22,7 +22,7 @@ zstyle ':omz:prompt:vi' command '<<<'
 zstyle ':omz:completion' indicator '...'
 
 # Beep on error in line editor.
-setopt BEEP
+#setopt BEEP
 
 # Reset to default key bindings.
 bindkey -d
@@ -184,8 +184,8 @@ bindkey -M vicmd "u" undo
   bindkey -M vicmd "$keyinfo[Control]R" redo
 
 # Switch to command mode.
-bindkey -M viins "jk" vi-cmd-mode
-bindkey -M viins "kj" vi-cmd-mode
+#bindkey -M viins "jk" vi-cmd-mode
+#bindkey -M viins "kj" vi-cmd-mode
 
 # History
 bindkey -M vicmd "gg" beginning-of-history
