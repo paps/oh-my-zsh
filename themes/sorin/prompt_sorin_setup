@@ -46,7 +46,7 @@ function prompt_sorin_setup {
   if [[ -n $TMUX_PANE ]]; then
     PROMPT='%F{cyan}%~%f${(e)git_prompt_info} %(!.%B%F{red}#%f%b.%B%F{green}❯%f%b) '
   else
-    PROMPT='%F{green}%n@%M %F{cyan}%~%f${(e)git_prompt_info} %(!.%B%F{red}#%f%b.%B%F{green}❯%f%b) '
+    PROMPT='%F{green}%n@%m %F{cyan}%~%f${(e)git_prompt_info} %(!.%B%F{red}#%f%b.%B%F{green}❯%f%b) '
   fi
 
   RPROMPT='${vi_prompt_info}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_rprompt_info}'
